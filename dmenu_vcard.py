@@ -60,20 +60,24 @@ def load_info_names() -> (str, dict):
     return names, info
 
 
-names, info = load_info_names()
-name = subprocess.run(["dmenu", "-i"], input=names.encode("UTF-8"),
-                      stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
+def main():
+    names, info = load_info_names()
+    name = subprocess.run(["dmenu", "-i"], input=names.encode("UTF-8"),
+                          stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
 
 
-if name in info.keys():
-    if len(info[name]) == 1:
-        res = info[name][0].valueRepr()
-    else:
-        DELIM = ":"
-        options = [item.params["TYPE"][0] + DELIM + item.valueRepr()
-                   for item in info[name]]
-        string = "\n".join(options)
-        res = subprocess.run(["dmenu", "-i"], input=string.encode("UTF-8"),
-                             stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
-        res = res.split(":")[-1]
-    copy_to_clipboard(res)
+    if name in info.keys():
+        if len(info[name]) == 1:
+            res = info[name][0].valueRepr()
+        else:
+            DELIM = ":"
+            options = [item.params["TYPE"][0] + DELIM + item.valueRepr()
+                       for item in info[name]]
+            string = "\n".join(options)
+            res = subprocess.run(["dmenu", "-i"], input=string.encode("UTF-8"),
+                                 stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
+            res = res.split(":")[-1]
+        copy_to_clipboard(res)
+
+if __name__ == "__main__":
+    main()
