@@ -5,8 +5,10 @@ import os
 import subprocess
 import unidecode
 import argparse
+import sys
 
-DIRECTORY = f"{os.getenv('HOME')}/.contacts/contacts/"
+if len(sys.argv) == 2:
+    DIRECTORY = sys.argv[1]
 
 query = subprocess.run(["dmenu", "-i", "-p", "Query:"], input=b"tel\nemail",
                        stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]

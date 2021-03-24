@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-go = "./dmenu_vcard.py"
+go = "./run.sh"
 
 [packages]
 vobject = "*"
