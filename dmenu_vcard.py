@@ -7,6 +7,15 @@ import unidecode
 import argparse
 import sys
 
+if len(sys.argv) == 2:
+    directory_arg = sys.argv[1]
+
+query_inp = subprocess.run(["dmenu", "-i", "-p", "Query:"], input=b"tel\nemail",
+                           stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
+if query_inp == "":
+    exit(1)
+
+
 def squeeze_string(text: str) -> str:
     """replaces multiple whitespaces with one and trims the string"""
     return " ".join(text.split())
@@ -24,13 +33,14 @@ def get_query(card, query) -> list:
     elif query == "tel":
         return card.tel_list
 
+
 def copy_to_clipboard(text: str) -> None:
     """copies given text to user clipboard"""
     subprocess.run(["xclip", "-selection", "clipboard"],
                    input=text.encode("UTF-8"), check=True)
 
 
-def load_info_names() -> (str, dict):
+def load_info_names(DIRECTORY, query) -> (str, dict):
     info = {}
     names = ""
     for contact in os.listdir(DIRECTORY):
@@ -51,18 +61,10 @@ def load_info_names() -> (str, dict):
     return names, info
 
 
-def main():
-    if len(sys.argv) == 2:
-        DIRECTORY = sys.argv[1]
-
-    query = subprocess.run(["dmenu", "-i", "-p", "Query:"], input=b"tel\nemail",
-                           stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
-    if query == "":
-        exit(1)
-    names, info = load_info_names()
+def main(DIRECTORY, query):
+    names, info = load_info_names(DIRECTORY, query)
     name = subprocess.run(["dmenu", "-i"], input=names.encode("UTF-8"),
                           stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
-
 
     if name in info.keys():
         if len(info[name]) == 1:
@@ -77,5 +79,6 @@ def main():
             res = res.split(":")[-1]
         copy_to_clipboard(res)
 
+
 if __name__ == "__main__":
-    main()
+    main(directory_arg, query_inp)
