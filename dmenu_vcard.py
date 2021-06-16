@@ -7,15 +7,6 @@ import unidecode
 import argparse
 import sys
 
-if len(sys.argv) == 2:
-    DIRECTORY = sys.argv[1]
-
-query = subprocess.run(["dmenu", "-i", "-p", "Query:"], input=b"tel\nemail",
-                       stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
-if query == "":
-    exit(1)
-
-
 def squeeze_string(text: str) -> str:
     """replaces multiple whitespaces with one and trims the string"""
     return " ".join(text.split())
@@ -61,6 +52,13 @@ def load_info_names() -> (str, dict):
 
 
 def main():
+    if len(sys.argv) == 2:
+        DIRECTORY = sys.argv[1]
+
+    query = subprocess.run(["dmenu", "-i", "-p", "Query:"], input=b"tel\nemail",
+                           stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
+    if query == "":
+        exit(1)
     names, info = load_info_names()
     name = subprocess.run(["dmenu", "-i"], input=names.encode("UTF-8"),
                           stdout=subprocess.PIPE, check=True).stdout.decode("UTF-8")[:-1]
